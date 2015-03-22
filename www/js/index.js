@@ -305,6 +305,9 @@ var app = {
 		
 		/* ONLY SHOW THREE PAGES AT THE TIME (FOR PERFORMANCE) */
 		
+		/* MAYBE ONLY RENDER THREE PAGES AND SWAP THE CONTENT IN THOSE */
+		
+		
 		swapPages: function(first_to_last){
 			var fetch = (first_to_last) ? 'shift' : 'pop';
 			var insert = (first_to_last) ? 'push' : 'unshift';
