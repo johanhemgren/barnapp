@@ -113,6 +113,7 @@ appPage.prototype.hidePoster = function(hide) {
 };
 
 appPage.prototype.start = function() {
+	this.isCurrent = true;
   if ( this.isLoaded ) {
 		if ( !this.hasRunned ) navigator.splashscreen.hide();
 	  this.video.currentTime = 0;
@@ -142,10 +143,11 @@ appPage.prototype.resume = function() {
 
 appPage.prototype.reset = function() {
 	this.hidePoster(false);
+	this.isCurrent = false;
+	this.isLoaded = false;
 	this.video.pause();
 	this.video.currentTime = 0;
 	this.playState = 'init';
-	this.isLoaded = false;
 	
 	if ( this.backgroundSound !== null ) {
 		this.backgroundSound.pause();
@@ -293,15 +295,15 @@ var app = {
 		resetSiblings: function(index) {
 			_self.pages.forEach(function(el,i){
 				if (i != index) el.reset();
-				_self.pages[index].isCurrent = false;
 			});
 		},
 		
 		initCurrentPage: function(index) {
 			_self.resetSiblings(index);
-			_self.pages[index].isCurrent = true;
 			_self.pages[index].start();
 		},
+		
+		/* ONLY SHOW THREE PAGES AT THE TIME (FOR PERFORMANCE) */
 		
 		swapPages: function(first_to_last){
 			var fetch = (first_to_last) ? 'shift' : 'pop';
