@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="se.produktionproduktion.barnapp" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <preference name="AllowInlineMediaPlayback" value="false" />
+    <preference name="BackupWebStorage" value="cloud" />
+    <preference name="DisallowOverscroll" value="false" />
+    <preference name="EnableViewportScale" value="false" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="true" />
+    <preference name="MediaPlaybackRequiresUserAction" value="false" />
+    <preference name="SuppressesIncrementalRendering" value="false" />
+    <preference name="GapBetweenPages" value="0" />
+    <preference name="PageLength" value="0" />
+    <preference name="PaginationBreakingMode" value="page" />
+    <preference name="PaginationMode" value="unpaginated" />
+    <feature name="LocalStorage">
+        <param name="ios-package" value="CDVLocalStorage" />
+    </feature>
+    <feature name="SplashScreen">
+        <param name="ios-package" value="CDVSplashScreen" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="Console">
+        <param name="ios-package" value="CDVLogger" />
+    </feature>
+    <icon density="mdpi" height="128" platform="ios" src="resources/icon/ios/ios128.png" width="128" />
+    <splash height="1334" src="resources/splash/ios/splash750x1334.png" width="750" />
+    <name>barnApp</name>
+    <description>A sample Apache Cordova application that responds to the deviceready event.</description>
+    <author email="info@produktionproduktion.se" href="http://produktionproduktion.se">ProduktionProduktion</author>
+    <content src="index.html" />
+    <access origin="*" />
+    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="FadeSplashScreen" value="true" />
+    <preference name="FadeSplashScreenDuration" value="9999" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+    <preference name="AllowInlineMediaPlayback" value="true" />
+</widget>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="se.produktionproduktion.barnapp" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>barnApp</name>
+    <description>A sample Apache Cordova application that responds to the deviceready event.</description>
+    <author email="info@produktionproduktion.se" href="http://produktionproduktion.se">ProduktionProduktion</author>
+    <content src="index.html" />
+    <access origin="*" />
+    
+    <preference name="AutoHideSplashScreen" value="false" />
+	<preference name="FadeSplashScreen" value="true" />
+	<preference name="FadeSplashScreenDuration" value="9999" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+		
+    <platform name="ios">
+        <icon src="resources/icon/ios/ios128.png" platform="ios" width="128" height="128" density="mdpi" />
+	    <splash src="resources/splash/ios/splash750x1334.png" width="750" height="1334"/>
+    </platform>
+    
+    <preference name="AllowInlineMediaPlayback" value="true" />
+    
+</widget>
