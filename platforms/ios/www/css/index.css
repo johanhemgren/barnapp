@@ -74,7 +74,6 @@ body {
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	width: 5000px;
 	height: 100%;
-	background-color: #a00;
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
 	-ms-transform: translateZ(0);
@@ -107,18 +106,30 @@ body {
 	float: left;
 	width: 320px;
 	height: 100%;
+<<<<<<< HEAD
 	font-size: 14px;
+=======
+>>>>>>> testing-branch
 	
 	background-size: 100% auto;
 }
 
+<<<<<<< HEAD
 #scroller li .video-loop,
 #scroller li .video {
 	display: block;
+=======
+#scroller li .video,
+#scroller li .video-loop {
+>>>>>>> testing-branch
 	width: 100%;
 	height: auto;
 	pointer-events: none;
 	-webkit-transition: all 250ms ease-out;
+<<<<<<< HEAD
+=======
+	opacity: 1;
+>>>>>>> testing-branch
 }
 
 #scroller li .video-loop {
@@ -128,12 +139,21 @@ body {
 	z-index: 3;
 }
 
+<<<<<<< HEAD
 #scroller li .video-loop,
 #scroller li .video { opacity: 1; }
 
 #scroller li .video-loop.hidden,
 #scroller li.poster .video-loop,
 #scroller li.poster .video { opacity: 0; }
+=======
+#scroller li .video-loop {
+	opacity: 0;
+}
+
+#scroller li.poster .video,
+#scroller li.poster .video-loop { opacity: 0; }
+>>>>>>> testing-branch
 
 #parallax {
 	pointer-events: none;

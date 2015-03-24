@@ -1,6 +1,10 @@
 var pagesObj = {
 	alpaca: {
+<<<<<<< HEAD
 		poster: 'poster/alpacka-poster.jpg',
+=======
+		poster: 'img/alpacka-poster.jpg',
+>>>>>>> testing-branch
 		video: 'video/alpacka.mp4',
 		pause: {
 			type: 'pause',
@@ -11,7 +15,11 @@ var pagesObj = {
 		frame: 'frame/border-leaves.png',
 	},
 	tiger: {
+<<<<<<< HEAD
 		poster: 'poster/tiger-poster.jpg',
+=======
+		poster: 'img/tiger-poster.jpg',
+>>>>>>> testing-branch
 		video: 'video/tiger.mp4',
 		pause: {
 			type: 'loop',
@@ -22,7 +30,11 @@ var pagesObj = {
 		frame: 'frame/border-leaves.png',
 	},
 	giraff: {
+<<<<<<< HEAD
 		poster: 'poster/giraff-poster.jpg',
+=======
+		poster: 'img/giraff-poster.jpg',
+>>>>>>> testing-branch
 		video: 'video/giraff.mp4',
 		pause: {
 			type: 'pause',
@@ -33,7 +45,11 @@ var pagesObj = {
 		frame: 'frame/border-leaves.png',
 	},
 	orm: {
+<<<<<<< HEAD
 		poster: 'poster/orm-poster.jpg',
+=======
+		poster: 'img/orm-poster.jpg',
+>>>>>>> testing-branch
 		video: 'video/orm.mp4',
 		pause: {
 			type: 'pause',
@@ -45,7 +61,11 @@ var pagesObj = {
 	},
 };
 
+<<<<<<< HEAD
 var appPage = function( page, video, loop, sound, pausetime, doloop, frame, index, name ) {
+=======
+var appPage = function( page, video, loop, sound, pausetime, doloop, frame, index ) {
+>>>>>>> testing-branch
 	this.elem = page;
 	this.video = video;
 	this.videoloop = loop;
@@ -168,7 +188,7 @@ appPage.prototype.start = function() {
 			this.sound.play();
 	  }
 	  
-	  this.hidePoster(true);
+	  this.hidePoster(true); console.log( "start() hide poster" );
 	  this.playState = 'start';
 	  this.hasRunned = true;
   } else {
@@ -185,7 +205,8 @@ appPage.prototype.resume = function() {
 };
 
 appPage.prototype.reset = function() {
-	this.hidePoster(false);
+	this.hidePoster(false); console.log( "reset() show poster" );
+	this.isCurrent = false;
 	this.video.pause();
 	this.video.currentTime = 0;
 	
@@ -258,13 +279,22 @@ var app = {
 					if (pagesObj.hasOwnProperty(key)) {
 						var page = pagesObj[key];
 						var video = null,
+<<<<<<< HEAD
 								loop = false,
 								sound = false;
+=======
+								loop = null,
+								sound = null;
+>>>>>>> testing-branch
 
 						var newPage = document.createElement("li");
 								newPage.setAttribute('class', 'page');
 								if (page.poster !== null) newPage.setAttribute('style', 'background-image:url("'+page.poster+'")');
+<<<<<<< HEAD
 								newPage.setAttribute('name', key);
+=======
+								newPage.setAttribute('data-index', key);
+>>>>>>> testing-branch
 						
 						if (page.video!=null) {
 							video = document.createElement("video");
@@ -324,7 +354,11 @@ var app = {
 								newFrame.appendChild(frameInner.cloneNode(false));
 						_self.parallaxContainer.appendChild(newFrame);
 						
+<<<<<<< HEAD
 						_self.pages[_self.pageCount] = new appPage(newPage, video, loop, sound, page.pause.time, page.pause.loop, newFrame, _self.pageCount, key );
+=======
+						_self.pages[_self.pageCount] = new appPage(newPage, video, loop, sound, page.pause.time, page.pause.loop, newFrame, _self.pageCount );
+>>>>>>> testing-branch
 						_self.pages[_self.pageCount].init();
 						
 						_self.pageCount++;
@@ -361,7 +395,6 @@ var app = {
 		resetSiblings: function(index) {
 			_self.pages.forEach(function(el,i){
 				if (i != index) el.reset();
-				_self.pages[index].isCurrent = false;
 			});
 		},
 		

@@ -133,7 +133,11 @@ appPage.prototype.hidePoster = function(hide) {
 	if ( hide ) {
 		setTimeout( (function(){
 			this.elem.className = 'page';
+<<<<<<< HEAD
 		}).bind(this), 250);
+=======
+		}).bind(this), 100);
+>>>>>>> testing-branch
 	} else {
 		this.elem.className = 'page poster';
 	}
@@ -146,7 +150,11 @@ appPage.prototype.hideLoop = function(hide) {
 	} else {
 		setTimeout( (function(){
 			if (this.videoloop) this.videoloop.className = 'video-loop';
+<<<<<<< HEAD
 		}).bind(this), 250);
+=======
+		}).bind(this), 100);
+>>>>>>> testing-branch
 	}
 };
 
@@ -215,7 +223,11 @@ appPage.prototype.loop = function() {
 	if ( this.videoloop ) this.videoloop.play();
 	setTimeout((function(){
 		if ( this.videoloop ) this.hideLoop(false);
+<<<<<<< HEAD
 	}).bind(this), 250);
+=======
+	}).bind(this), 100);
+>>>>>>> testing-branch
 };
 
 var app = {
