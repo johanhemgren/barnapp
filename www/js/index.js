@@ -133,7 +133,7 @@ appPage.prototype.hidePoster = function(hide) {
 	if ( hide ) {
 		setTimeout( (function(){
 			this.elem.className = 'page';
-		}).bind(this), 100);
+		}).bind(this), 250);
 	} else {
 		this.elem.className = 'page poster';
 	}
@@ -146,7 +146,7 @@ appPage.prototype.hideLoop = function(hide) {
 	} else {
 		setTimeout( (function(){
 			if (this.videoloop) this.videoloop.className = 'video-loop';
-		}).bind(this), 100);
+		}).bind(this), 250);
 	}
 };
 
@@ -215,7 +215,7 @@ appPage.prototype.loop = function() {
 	if ( this.videoloop ) this.videoloop.play();
 	setTimeout((function(){
 		if ( this.videoloop ) this.hideLoop(false);
-	}).bind(this), 100);
+	}).bind(this), 250);
 };
 
 var app = {
