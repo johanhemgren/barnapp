@@ -10,6 +10,8 @@ var pagesObj = {
 		sound: null,
 		frame: 'frame/border-leaves.png',
 	},
+	
+	/* FIRST PAGE */
 	tiger: {
 		poster: 'poster/tiger-poster.jpg',
 		video: 'video/tiger.mp4',

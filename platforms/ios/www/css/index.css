@@ -19,26 +19,9 @@
 * { 
 	-webkit-tap-highlight-color: rgba(0,0,0,0); 
 	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
 }
 
 html, body { margin: 0; padding: 0; }
-
-html {
-	-ms-touch-action: none;
-}
-
-#console {
-	position: fixed;
-	bottom: 0;
-	right: 0;
-	color: red;
-	background: white;
-	padding: 5px;
-	z-index: 9999;
-	display: none;
-}
 
 body,ul,li {
 	padding: 0;
@@ -62,10 +45,6 @@ body {
 	overflow: hidden;
 	
 	-webkit-transition: all 750ms ease-out;
-	-moz-transition: all 750ms ease-out;
-	-ms-transition: all 750ms ease-out;
-	-o-transition: all 750ms ease-out;
-	transition: all 750ms ease-out;
 }
 
 #scroller {
@@ -75,20 +54,9 @@ body {
 	width: 5000px;
 	height: 100%;
 	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 	-webkit-text-size-adjust: none;
-	-moz-text-size-adjust: none;
-	-ms-text-size-adjust: none;
-	-o-text-size-adjust: none;
-	text-size-adjust: none;
 }
 
 #scroller ul {
@@ -104,32 +72,19 @@ body {
 	position: relative;
 	display: block;
 	float: left;
-	width: 320px;
+	width: 100%;
 	height: 100%;
-<<<<<<< HEAD
-	font-size: 14px;
-=======
->>>>>>> testing-branch
 	
 	background-size: 100% auto;
 }
 
-<<<<<<< HEAD
 #scroller li .video-loop,
 #scroller li .video {
 	display: block;
-=======
-#scroller li .video,
-#scroller li .video-loop {
->>>>>>> testing-branch
 	width: 100%;
 	height: auto;
 	pointer-events: none;
 	-webkit-transition: all 250ms ease-out;
-<<<<<<< HEAD
-=======
-	opacity: 1;
->>>>>>> testing-branch
 }
 
 #scroller li .video-loop {
@@ -139,21 +94,12 @@ body {
 	z-index: 3;
 }
 
-<<<<<<< HEAD
 #scroller li .video-loop,
 #scroller li .video { opacity: 1; }
 
 #scroller li .video-loop.hidden,
 #scroller li.poster .video-loop,
 #scroller li.poster .video { opacity: 0; }
-=======
-#scroller li .video-loop {
-	opacity: 0;
-}
-
-#scroller li.poster .video,
-#scroller li.poster .video-loop { opacity: 0; }
->>>>>>> testing-branch
 
 #parallax {
 	pointer-events: none;
@@ -174,21 +120,8 @@ body {
 	bottom: 0;
 	
 	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
 	white-space: nowrap;
 }
-
-/* 
-
-- - - - - - - - - - - - - - - - 
-
-var width = window.innerWidth * 1.4;
-var negMargin = ( ( window.innerWidth * 1.4 ) - window.innerWidth ) / 2;
-
-*/
 
 #parallax-inner .frame {
 	position: relative;
