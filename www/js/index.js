@@ -274,29 +274,15 @@ var app = {
 								video.setAttribute('webkit-playsinline', 'true');
 								video.setAttribute('src', page.video);
 								video.setAttribute('type', 'video/mp4');
-								//video.setAttribute('preload', 'true');
-/*
-								var video_src = document.createElement("source");
-									video_src.setAttribute('src', page.video);
-									video_src.setAttribute('type', 'video/mp4');
-								video.appendChild(video_src);
-*/
 							newPage.appendChild(video);
 						}
 						if (page.pause.type=='loop' && page.pause.loop!=null) {
 							loop = document.createElement("video");
 							loop.setAttribute('class', 'video-loop');
 							loop.setAttribute('webkit-playsinline','true');
-							//loop.setAttribute('preload','true');
 							loop.setAttribute('loop','true');
 							loop.setAttribute('src', page.pause.loop);
 							loop.setAttribute('type', 'video/mp4');
-/*
-							var loop_src = document.createElement("source");
-									loop_src.setAttribute('src', page.pause.loop);
-									loop_src.setAttribute('type', 'video/mp4');
-								loop.appendChild(loop_src);
-*/
 							newPage.appendChild(loop);
 						}
 						if (page.sound!=null) {
@@ -306,12 +292,6 @@ var app = {
 								sound.setAttribute('src', page.sound);
 								sound.setAttribute('type', 'audio/mpeg');
 								sound.setAttribute('volume', 0.5);
-/*
-								var sound_src = document.createElement("source");
-										sound_src.setAttribute('src', page.sound);
-										sound_src.setAttribute('type', 'audio/mpeg');
-									sound.appendChild(sound_src);
-*/
 							newPage.appendChild(sound);
 						}
 						_self.pageContainer.appendChild(newPage);
