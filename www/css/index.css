@@ -107,22 +107,20 @@ body {
 	float: left;
 	width: 320px;
 	height: 100%;
-	border-right: 1px solid #ccc;
 	font-size: 14px;
 	
-	background: #eee;
-	color: #ccc;
+	background-size: 100% auto;
 }
 
-#scroller li .video-poster,
 #scroller li .video-loop,
-#scroller li video {
-	width: 100.2%;
+#scroller li .video {
+	display: block;
+	width: 100%;
 	height: auto;
 	pointer-events: none;
+	-webkit-transition: all 250ms ease-out;
 }
 
-#scroller li .video-poster,
 #scroller li .video-loop {
 	position: absolute;
 	left:0;
@@ -130,25 +128,12 @@ body {
 	z-index: 3;
 }
 
-#scroller li .video-loop {
-	opacity: 0;
-}
+#scroller li .video-loop,
+#scroller li .video { opacity: 1; }
 
-#scroller li .video-poster {
-	height: 100%;
-	background-size: 100% auto;
-	-webkit-transition: all 250ms ease-out;
-	opacity: 1;
-}
-
-#scroller li .video-poster.hidden {
-	opacity: 0;
-}
-
-#scroller li:first-child {
-	background: #fff;
-	color: #f00;
-}
+#scroller li .video-loop.hidden,
+#scroller li.poster .video-loop,
+#scroller li.poster .video { opacity: 0; }
 
 #parallax {
 	pointer-events: none;

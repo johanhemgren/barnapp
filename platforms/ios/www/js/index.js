@@ -1,6 +1,6 @@
 var pagesObj = {
 	alpaca: {
-		poster: 'video/alpacka-poster.jpg',
+		poster: 'poster/alpacka-poster.jpg',
 		video: 'video/alpacka.mp4',
 		pause: {
 			type: 'pause',
@@ -8,10 +8,10 @@ var pagesObj = {
 			loop: null,
 		},
 		sound: null,
-		frame: 'img/border-leaves.png',
+		frame: 'frame/border-leaves.png',
 	},
 	tiger: {
-		poster: 'video/tiger-poster.jpg',
+		poster: 'poster/tiger-poster.jpg',
 		video: 'video/tiger.mp4',
 		pause: {
 			type: 'loop',
@@ -19,10 +19,10 @@ var pagesObj = {
 			loop: 'video/tiger-loop.mp4',
 		},
 		sound: 'audio/jungle.mp3',
-		frame: 'img/border-leaves.png',
+		frame: 'frame/border-leaves.png',
 	},
 	giraff: {
-		poster: 'video/giraff-poster.jpg',
+		poster: 'poster/giraff-poster.jpg',
 		video: 'video/giraff.mp4',
 		pause: {
 			type: 'pause',
@@ -30,10 +30,10 @@ var pagesObj = {
 			loop: null,
 		},
 		sound: null,
-		frame: 'img/border-leaves.png',
+		frame: 'frame/border-leaves.png',
 	},
 	orm: {
-		poster: 'video/orm-poster.jpg',
+		poster: 'poster/orm-poster.jpg',
 		video: 'video/orm.mp4',
 		pause: {
 			type: 'pause',
@@ -41,16 +41,15 @@ var pagesObj = {
 			loop: null,
 		},
 		sound: null,
-		frame: 'img/border-leaves.png',
+		frame: 'frame/border-leaves.png',
 	},
 };
 
-var appPage = function( page, video, poster, loop, sound, pausetime, doloop, frame, index ) {
+var appPage = function( page, video, loop, sound, pausetime, doloop, frame, index, name ) {
 	this.elem = page;
 	this.video = video;
-	this.poster = poster;
 	this.videoloop = loop;
-	this.backgroundSound = sound;
+	this.sound = sound;
 	this.frame = frame;
 	this.pauseState = {
 		time: pausetime, 
@@ -62,20 +61,49 @@ var appPage = function( page, video, poster, loop, sound, pausetime, doloop, fra
 	this.playState = 'init'; // init | start | resume | paused | ended | loading;
 	this.hasRunned = false;
 	this.index = index;
+	this.name = name;
+	this.touchTime = null;
+	this.click = false;
 };
 
 appPage.prototype.init = function() {
+	this.elem.addEventListener('touchstart', this.onTouchStart.bind(this), false);
+	this.elem.addEventListener('touchmove', this.onTouchMove.bind(this), false);
 	this.elem.addEventListener('touchend', this.onTouchEnd.bind(this), false);
 	this.video.addEventListener('ended', this.onVideoEnded.bind(this), false);
 	this.video.addEventListener('loadeddata', this.onVideoLoaded.bind(this), false);
 	this.video.addEventListener("timeupdate", this.onTimeUpdate.bind(this), false);
+	if (this.videoloop) this.videoloop.addEventListener('loadeddata', this.hideLoop.bind(this),false);
+	document.addEventListener('pause', this.onBlur.bind(this), false);
+	document.addEventListener('resume', this.onFocus.bind(this), false);
+};
+
+appPage.prototype.onBlur = function(){
+	this.reset();
+};
+
+appPage.prototype.onFocus = function(){
+	this.start();
+};
+
+appPage.prototype.onTouchStart = function(e){
+	this.click = true;
+	this.touchTime = setTimeout((function(time){
+		this.click = false;
+		clearTimeout(time)
+	}).bind(this), 250);
+};
+
+appPage.prototype.onTouchMove = function(e){
+	this.click = false;
+	clearTimeout(this.touchTime);
 };
 
 appPage.prototype.onTouchEnd = function(e){
 	if ( this.playState == 'paused' ) {
-		this.resume();
+		if ( this.click ) this.resume();
 	} else if ( this.playState == 'init' || this.playState == 'ended' ) {
-		this.start();
+		if ( this.click ) this.start();
 	}
 };
 
@@ -95,7 +123,7 @@ appPage.prototype.onVideoLoaded = function() {
 appPage.prototype.onTimeUpdate = function() {
 	if ( this.playState == 'start' && this.video.currentTime >= this.pauseState.time ) {
 		this.pause();
-		if (this.pauseState.loop) this.loop();
+		if (this.pauseState.loop !== null) this.loop();
 	}
 	if ( this.video.currentTime >= this.duration-0.1 ) this.hidePoster(true);
 };
@@ -103,39 +131,54 @@ appPage.prototype.onTimeUpdate = function() {
 appPage.prototype.hidePoster = function(hide) {
 	hide = typeof hide !== 'undefined' ? hide : true;
 	if ( hide ) {
-		var ths = this;
-		setTimeout(function(){
-			ths.poster.className = ths.poster.className + ' hidden';
-		}, 100);
+		setTimeout( (function(){
+			this.elem.className = 'page';
+		}).bind(this), 100);
 	} else {
-		this.poster.className = 'video-poster';
+		this.elem.className = 'page poster';
 	}
 };
 
+appPage.prototype.hideLoop = function(hide) {
+	hide = typeof hide !== 'undefined' ? hide : true;
+	if ( hide ) {
+		if (this.videoloop) this.videoloop.className = 'video-loop hidden';
+	} else {
+		setTimeout( (function(){
+			if (this.videoloop) this.videoloop.className = 'video-loop';
+		}).bind(this), 100);
+	}
+};
+
+appPage.prototype.load = function() {
+	this.video.load();
+  if (this.sound) this.sound.load();
+  if (this.videoloop) this.videoloop.load();
+  this.playState = 'loading';
+}
+
 appPage.prototype.start = function() {
-	this.isCurrent = true;
   if ( this.isLoaded ) {
 		if ( !this.hasRunned ) navigator.splashscreen.hide();
 	  this.video.currentTime = 0;
 	  this.video.play();
 	  
-	  if ( !this.hasRunned && this.backgroundSound !== null ) {
-			this.backgroundSound.currentTime = 0;
-			this.backgroundSound.play();
+	  if ( !this.hasRunned && this.sound ) {
+			this.sound.currentTime = 0;
+			this.sound.play();
 	  }
 	  
 	  this.hidePoster(true);
 	  this.playState = 'start';
 	  this.hasRunned = true;
   } else {
-	  this.video.load();
-	  this.playState = 'loading';
+	  this.load();
   }
 };
 
 appPage.prototype.resume = function() {
-	this.videoloop.style.opacity = 0;
-	this.videoloop.pause();
+	this.hideLoop(true);
+	if (this.videoloop) this.videoloop.pause();
 	
   this.video.play();
   this.playState = 'resume';
@@ -143,16 +186,23 @@ appPage.prototype.resume = function() {
 
 appPage.prototype.reset = function() {
 	this.hidePoster(false);
-	this.isCurrent = false;
-	this.isLoaded = false;
 	this.video.pause();
 	this.video.currentTime = 0;
-	this.playState = 'init';
 	
-	if ( this.backgroundSound !== null ) {
-		this.backgroundSound.pause();
-		this.backgroundSound.currentTime = 0;
+	if ( this.sound ) {
+		this.sound.pause();
+		this.sound.currentTime = 0;
   }
+  
+  if ( this.videoloop ) {
+		this.videoloop.pause();
+		this.videoloop.currentTime = 0;
+		this.hideLoop(true);
+  }
+  
+  this.playState = 'init';
+  this.hasRunned = false;
+	this.isLoaded = false;
 };
 
 appPage.prototype.pause = function() {
@@ -162,11 +212,10 @@ appPage.prototype.pause = function() {
 };
 
 appPage.prototype.loop = function() {
-	this.videoloop.play();
-	var _this = this;
-	setTimeout(function(){
-		_this.videoloop.style.opacity = 1;
-	}, 100);
+	if ( this.videoloop ) this.videoloop.play();
+	setTimeout((function(){
+		if ( this.videoloop ) this.hideLoop(false);
+	}).bind(this), 100);
 };
 
 var app = {
@@ -209,51 +258,58 @@ var app = {
 					if (pagesObj.hasOwnProperty(key)) {
 						var page = pagesObj[key];
 						var video = null,
-								loop = null,
-								poster = null,
-								sound = null;
+								loop = false,
+								sound = false;
 
 						var newPage = document.createElement("li");
 								newPage.setAttribute('class', 'page');
-								newPage.setAttribute('data-index', key);
+								if (page.poster !== null) newPage.setAttribute('style', 'background-image:url("'+page.poster+'")');
+								newPage.setAttribute('name', key);
 						
 						if (page.video!=null) {
 							video = document.createElement("video");
 								video.setAttribute('class', 'video');
 								video.setAttribute('webkit-playsinline', 'true');
+								video.setAttribute('src', page.video);
+								video.setAttribute('type', 'video/mp4');
 								//video.setAttribute('preload', 'true');
+/*
 								var video_src = document.createElement("source");
 									video_src.setAttribute('src', page.video);
 									video_src.setAttribute('type', 'video/mp4');
 								video.appendChild(video_src);
+*/
 							newPage.appendChild(video);
 						}
 						if (page.pause.type=='loop' && page.pause.loop!=null) {
 							loop = document.createElement("video");
 							loop.setAttribute('class', 'video-loop');
 							loop.setAttribute('webkit-playsinline','true');
-							loop.setAttribute('preload','true');
+							//loop.setAttribute('preload','true');
 							loop.setAttribute('loop','true');
+							loop.setAttribute('src', page.pause.loop);
+							loop.setAttribute('type', 'video/mp4');
+/*
 							var loop_src = document.createElement("source");
 									loop_src.setAttribute('src', page.pause.loop);
 									loop_src.setAttribute('type', 'video/mp4');
 								loop.appendChild(loop_src);
+*/
 							newPage.appendChild(loop);
-						}
-						if (page.poster!=null) {
-							poster = document.createElement("div");
-								poster.setAttribute('class', 'video-poster');
-								poster.setAttribute('style', 'background-image:url("'+page.poster+'")');
-							newPage.appendChild(poster);
 						}
 						if (page.sound!=null) {
 							sound = document.createElement("audio");
 								sound.setAttribute('class', 'background-sound');
 								sound.setAttribute('loop','true');
+								sound.setAttribute('src', page.sound);
+								sound.setAttribute('type', 'audio/mpeg');
+								sound.setAttribute('volume', 0.5);
+/*
 								var sound_src = document.createElement("source");
 										sound_src.setAttribute('src', page.sound);
 										sound_src.setAttribute('type', 'audio/mpeg');
 									sound.appendChild(sound_src);
+*/
 							newPage.appendChild(sound);
 						}
 						_self.pageContainer.appendChild(newPage);
@@ -268,7 +324,7 @@ var app = {
 								newFrame.appendChild(frameInner.cloneNode(false));
 						_self.parallaxContainer.appendChild(newFrame);
 						
-						_self.pages[_self.pageCount] = new appPage(newPage, video, poster, loop, sound, page.pause.time, page.pause.loop, newFrame, _self.pageCount );
+						_self.pages[_self.pageCount] = new appPage(newPage, video, loop, sound, page.pause.time, page.pause.loop, newFrame, _self.pageCount, key );
 						_self.pages[_self.pageCount].init();
 						
 						_self.pageCount++;
@@ -287,23 +343,33 @@ var app = {
 			_self.initCurrentPage(_self.currentPageIndex);
 		},
 		adjustWidth: function(el,i,arr){
-			el.elem.style.width = window.innerWidth+'px';
-			el.frame.style.width = window.innerWidth * 1.4 + 'px';
-			var margin = (i===0) ? -( ( window.innerWidth * 1.4 ) - window.innerWidth ) / 2 : 0;
+			var ww = window.innerWidth;
+			var wh = window.innerHeight;
+			var proportions = ww / wh;
+	    var video_prop = 750 / 1334;
+	    var new_height = ww/video_prop;
+	    var margin_top = -( new_height - wh ) / 2;
+			
+			el.elem.style.width = ww+'px';
+			el.elem.style.backgroundPositionY = margin_top+'px';
+			el.video.style.marginTop = margin_top+'px';
+			if ( el.videoloop ) el.videoloop.style.top = margin_top+'px';
+			el.frame.style.width = ww * 1.4 + 'px';
+			var margin = (i===0) ? -( ( ww * 1.4 ) - ww ) / 2 : 0;
 			el.frame.style.marginLeft = margin + 'px';
 		},
 		resetSiblings: function(index) {
 			_self.pages.forEach(function(el,i){
 				if (i != index) el.reset();
+				_self.pages[index].isCurrent = false;
 			});
 		},
 		
 		initCurrentPage: function(index) {
 			_self.resetSiblings(index);
+			_self.pages[index].isCurrent = true;
 			_self.pages[index].start();
 		},
-		
-		/* ONLY SHOW THREE PAGES AT THE TIME (FOR PERFORMANCE) */
 		
 		swapPages: function(first_to_last){
 			var fetch = (first_to_last) ? 'shift' : 'pop';
