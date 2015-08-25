@@ -1,24 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 * { 
 	-webkit-tap-highlight-color: rgba(0,0,0,0); 
 	-webkit-box-sizing: border-box;
+	-webkit-user-select: none;
 }
 
 html, body { margin: 0; padding: 0; }
@@ -31,29 +14,24 @@ body,ul,li {
 
 body {
 	overflow: hidden; /* this is important to prevent the whole page to bounce */
-	background: #5FC22C;
+	background: #000;
 }
 
 #wrapper {
 	position: absolute;
-	z-index: 1;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	width: 100%;
 	background: transparent;
 	overflow: hidden;
-	
-	-webkit-transition: all 750ms ease-out;
 }
 
 #scroller {
 	position: absolute;
-	z-index: 2;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	width: 5000px;
 	height: 100%;
-	-webkit-transform: translateZ(0);
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-webkit-text-size-adjust: none;
@@ -74,32 +52,72 @@ body {
 	float: left;
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
 	
-	background-size: 100% auto;
+	background-size: auto 100%;
+	background-position: center;
+}
+
+#scroller li.off-screen {
+	background-image: none;
+	background-color: transparent;
+}
+
+#scroller li input {
+	position: absolute;
+	left: 50%;
+	bottom: 20px;
+	width: 70px;
+	height: 70px;
+	margin-left: -35px;
+	-webkit-appearance: caret;
+	border: none;
+	border-radius: 100px;
+	background-image: url('button.svg');
+	background-size: contain;
+	font-size: 60px;
+	font-weight: bold;
+	padding:0;
+	color:transparent;
+	opacity: 0.8;
+}
+
+@media (max-width: 321px) {
+	#scroller li input {
+		width: 50px;
+		height: 50px;
+		margin-left: -25px;
+		bottom: 15px;
+	}
 }
 
 #scroller li .video-loop,
 #scroller li .video {
-	display: block;
-	width: 100%;
-	height: auto;
-	pointer-events: none;
-	-webkit-transition: all 250ms ease-out;
-}
-
-#scroller li .video-loop {
 	position: absolute;
 	left:0;
 	top:0;
-	z-index: 3;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	-webkit-transition: all 0ms;
+	-webkit-transition-delay: 100ms;
 }
 
-#scroller li .video-loop,
-#scroller li .video { opacity: 1; }
+#scroller li.touch .video-loop {
+	-webkit-transition-delay: 0ms;
+}
+
+#scroller li.touch.poster .video-loop {
+	-webkit-transition-delay: 100ms;
+}
 
 #scroller li .video-loop.hidden,
 #scroller li.poster .video-loop,
-#scroller li.poster .video { opacity: 0; }
+#scroller li.poster .video { 
+	-webkit-transform: translateY(-9999px);
+	-webkit-transition-delay: 0ms;
+}
+
 
 #parallax {
 	pointer-events: none;
@@ -108,7 +126,6 @@ body {
 	top: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 4;
 	overflow: hidden;
 }
 
@@ -118,12 +135,10 @@ body {
 	left: 0;
 	width: 5000px;
 	bottom: 0;
-	
-	-webkit-transform: translateZ(0);
 	white-space: nowrap;
 }
 
-#parallax-inner .frame {
+#parallax #parallax-inner .frame {
 	position: relative;
 	display: block;
 	float: left;
@@ -133,20 +148,27 @@ body {
 	padding:0;
 }
 
-#parallax-inner .frame:first-child {
+#parallax #parallax-inner .frame:first-child {
 	margin-left: -75px; 
 }
 
-#parallax #parallax-inner .frame .frame-inner {
+#parallax #parallax-inner .frame:before,
+#parallax #parallax-inner .frame:after {
+	content: '';
 	position: absolute;
-	width: 25%;
+	width: 41%;
 	height: auto;
 	top: 0;
 	bottom: 0;
-	background-size: 100% auto;
-	background-repeat: repeat-y;
+	background-size: 100% 200%;
+	background-repeat: no-repeat;
 }
 
-#parallax-inner .frame .frame-inner:first-child { left: -20px; }
-#parallax-inner .frame .frame-inner:last-child { right: -20px; }
+#parallax #parallax-inner .frame:before { left: -12%; background-position: top; }
+#parallax #parallax-inner .frame:after { right: -12%; background-position: bottom; }
 
+#scroller li { -webkit-transform-style: preserve-3d; }
+#scroller li .video { -webkit-transform: translateZ(0); }
+#scroller li .video-loop { -webkit-transform: translateZ(10px); }
+
+#scroller li input { -webkit-transform: translateZ(20px); }

@@ -1,64 +1,141 @@
+var pageCount = 6;
+
 var pagesObj = {
-	alpaca: {
-		poster: 'poster/alpacka-poster.jpg',
-		video: 'video/alpacka.mp4',
-		pause: {
-			type: 'pause',
-			time: 4.0,
-			loop: null,
-		},
-		sound: null,
-		frame: 'frame/border-leaves.png',
-	},
-	
-	/* FIRST PAGE */
-	tiger: {
-		poster: 'poster/tiger-poster.jpg',
-		video: 'video/tiger.mp4',
+/*
+	chimpans: {
+		poster: 'poster/chimpans-poster.jpg',
+		video: 'video/schimpans_VIDEO1.mp4',
 		pause: {
 			type: 'loop',
-			time: 3.4,
-			loop: 'video/tiger-loop.mp4',
+			time: 0,
+			loop: 'video/schimpans_VIDEO2.mp4',
+			finish: true,
 		},
-		sound: 'audio/jungle.mp3',
-		frame: 'frame/border-leaves.png',
+		endloop: true,
+		sound: 'audio/schimpans_BG_SOUND.caf',
+		frame: 'frame/border-stork.png',
+		answer: 'Schimpans på dans',
 	},
-	giraff: {
-		poster: 'poster/giraff-poster.jpg',
-		video: 'video/giraff.mp4',
+*/
+	chimpans: {
+		poster: 'poster/chimpans-poster-ny.jpg',
+		video: 'video/SHIMPANS_NY.mp4',
 		pause: {
 			type: 'pause',
-			time: 4.5,
-			loop: null,
+			time: false,
+			loop: false,
+			finish: false,
 		},
-		sound: null,
-		frame: 'frame/border-leaves.png',
+		endloop: true,
+		sound: 'audio/schimpans_BG_SOUND.caf',
+		frame: 'frame/border-stork.png',
+		answer: 'Schimpans på dans',
 	},
-	orm: {
-		poster: 'poster/orm-poster.jpg',
-		video: 'video/orm.mp4',
+	
+	// 0.2597 0.3464
+	
+	/* FIRST PAGE */
+	elefant: {
+		poster: 'poster/elefant-poster.jpg',
+		video: 'video/elefant_video1v2.mp4',
 		pause: {
-			type: 'pause',
-			time: 5.0,
-			loop: null,
+			type: 'loop',
+			time: 1.5,
+			loop: 'video/elefant_video2.mp4',
+			finish: false,
 		},
-		sound: null,
-		frame: 'frame/border-leaves.png',
+		endloop: true,
+		sound: 'audio/elefant_bg_sound_1-2.caf',
+		frame: 'frame/border-elefent.png',
+		answer: 'Elefant på högkant',
+	},
+	
+	stork: {
+		poster: 'poster/stork-poster.jpg',
+		video: 'video/stork_video_1.mp4',
+		pause: {
+			type: 'touch',
+			time: false,
+			loop: 'video/stork_video_2.mp4',
+			finish: false,
+		},
+		endloop: true,
+		sound: 'audio/stork_bg_sound.caf',
+		frame: 'frame/border-stork.png',
+		answer: 'Stork med hårtork',
+	},
+	trast: {
+		poster: 'poster/trast-poster.jpg',
+		video: 'video/trast_VIDEO1.mp4',
+		pause: {
+			type: 'loop',
+			time: 0,
+			loop: 'video/trast_VIDEO2.mp4',
+			finish: false,
+		},
+		endloop: true,
+		sound: 'audio/trast_bg_audio_1-2.caf',
+		frame: 'frame/border-trast.png',
+		answer: 'Trast på rast ',
+	},
+	koala: {
+		poster: 'poster/koala-poster.jpg',
+		video: 'video/KOALA_VIDEO1.mp4',
+		pause: {
+			type: 'loop',
+			time: 0,
+			loop: 'video/KOALA_VIDEO2.mp4',
+			finish: false,
+		},
+		endloop: true,
+		sound: 'audio/KOALA_bg_sound.caf',
+		frame: 'frame/border-djungle.png',
+		answer: 'Koala i färgskala',
+	},
+	ormvrak: {
+		poster: 'poster/ormvrak-poster.jpg',
+		video: 'video/ORMVRAK_VIDEO_1.mp4',
+		pause: {
+			type: 'loop',
+			time: 2.00,
+			loop: 'video/ORMVRAK_VIDEO_2.mp4',
+			finish: false,
+		},
+		endloop: true,
+		sound: 'audio/ormvrak_BG_SOUND.caf',
+		frame: 'frame/border-stork.png',
+		answer: 'Ormvrååk i vråålååk',
 	},
 };
 
-var appPage = function( page, video, loop, sound, pausetime, doloop, frame, index, name ) {
+var appPage = function( page, video, videourl, loop, loopurl, sound, soundurl, pausetime, doloop, frame, index, name, pausetype, answer, endloop, finishloop, answertext ) {
+	_this = this;
 	this.elem = page;
 	this.video = video;
+	this.videourl = videourl;
 	this.videoloop = loop;
-	this.sound = sound;
+	this.loopurl = loopurl;
+	this.endloop = endloop;
+	this.sound = new Media(soundurl);
+	this.volume = 1;
 	this.frame = frame;
+	this.button = answer;
+	this.answer = new SpeechSynthesisUtterance(answertext);
+		this.answer.voiceURI = 'native';
+		this.answer.lang = 'sv-SE';
+		this.answer.rate = 0.25;
+		this.answer.pitch = 1.8;
+	this.isReading = false;
 	this.pauseState = {
+		type: pausetype,
 		time: pausetime, 
 		loop: doloop,
+		finish: finishloop,
 	};
 	this.duration = null;
-	this.isLoaded = false;
+	this.loopduration = null;
+	this.loopstart = 0;
+	this.loopend = 0;
 	this.isCurrent = false;
 	this.playState = 'init'; // init | start | resume | paused | ended | loading;
 	this.hasRunned = false;
@@ -66,159 +143,261 @@ var appPage = function( page, video, loop, sound, pausetime, doloop, frame, inde
 	this.name = name;
 	this.touchTime = null;
 	this.click = false;
+	this.isPosetrHide = 0;
+	this.finishloop = false;
+	this.playedCount = 0;
+	this.isPlaying = false;
+	this.isLoopPlaying = false;
 };
 
-appPage.prototype.init = function() {
-	this.elem.addEventListener('touchstart', this.onTouchStart.bind(this), false);
-	this.elem.addEventListener('touchmove', this.onTouchMove.bind(this), false);
-	this.elem.addEventListener('touchend', this.onTouchEnd.bind(this), false);
-	this.video.addEventListener('ended', this.onVideoEnded.bind(this), false);
-	this.video.addEventListener('loadeddata', this.onVideoLoaded.bind(this), false);
-	this.video.addEventListener("timeupdate", this.onTimeUpdate.bind(this), false);
-	if (this.videoloop) this.videoloop.addEventListener('loadeddata', this.hideLoop.bind(this),false);
-	document.addEventListener('pause', this.onBlur.bind(this), false);
-	document.addEventListener('resume', this.onFocus.bind(this), false);
-};
+		appPage.prototype.init = function() {
+			if (this.videoloop && this.pauseState.type == 'touch' ) {
+				this.elem.addEventListener('touchstart', this.onTouchStart.bind(this), false);
+				this.elem.addEventListener('touchmove', this.onTouchEnd.bind(this), false);
+				this.elem.addEventListener('touchend', this.onTouchEnd.bind(this), false);
+			} else {
+				this.elem.addEventListener('touchstart', this.onClickStart.bind(this), false);
+				this.elem.addEventListener('touchmove', this.onClickMove.bind(this), false);
+				this.elem.addEventListener('touchend', this.onClickEnd.bind(this), false);
+			}
+			this.video.addEventListener('playing', (function(){ this.isPlaying = true; }).bind(this), false);
+			this.video.addEventListener('pause', (function(){ this.isPlaying = false; }).bind(this), false);
+			
+			this.video.addEventListener('ended', this.onVideoEnded.bind(this), false);
+			this.video.addEventListener('loadeddata', this.onVideoLoaded.bind(this), false);
+			//this.video.addEventListener('timeupdate', this.onTimeUpdate.bind(this), false);
+			
+			if (this.videoloop) this.videoloop.addEventListener('loadeddata', this.onLoopLoaded.bind(this), false);
+			if (this.videoloop) this.videoloop.addEventListener('playing', (function(){ this.isLoopPlaying = true; }).bind(this), false);
+			if (this.videoloop) this.videoloop.addEventListener('pause', (function(){ this.isLoopPlaying = false; }).bind(this), false);
+			//if (this.videoloop) this.videoloop.addEventListener('ended', this.onLoopEnded.bind(this), false);
+			
+			this.button.addEventListener('touchstart', this.onAnswerClick.bind(this), false);
+			
+			this.answer.addEventListener('start', this.onAnswerStart.bind(this), false);
+			this.answer.addEventListener('end', this.onAnswerEnd.bind(this), false);
+		};
+		
+		
+		/*  A N S W E R  */
+		
+		appPage.prototype.onAnswerClick = function(){
+		  if ( !this.isReading ) window.speechSynthesis.speak(this.answer);
+		};
+		
+		appPage.prototype.onAnswerStart = function(){ this.isReading = true; };
+		
+		appPage.prototype.onAnswerEnd = function(){ this.isReading = false; };
+		
+		
+		/*  T O U C H  */
+		
+		appPage.prototype.onTouchStart = function(e){
+			/* Check if answer button was clicked */
+			if ( e.target.nodeName == 'INPUT' ) return false;
+			this.videoloop.currentTime = this.loopstart;
+			this.touchplay();
+		};
+		
+		appPage.prototype.onTouchEnd = function(e){
+			this.touchpause();
+			this.videoloop.currentTime = this.loopstart;
+		};
+		
+		appPage.prototype.onClickStart = function(e){
+			this.click = true;
+			this.touchTime = setTimeout((function(time){
+				this.click = false;
+				clearTimeout(time);
+			}).bind(this), 500);
+		};
+		
+		appPage.prototype.onClickMove = function(e){
+			this.click = false;
+			clearTimeout(this.touchTime);
+		};
+		
+		appPage.prototype.onClickEnd = function(e){
+			/* Check if answer button was clicked */
+			if ( this.click && e.target.nodeName != 'INPUT') {
+				if ( this.playState == 'paused' ) {
+					if ( this.pauseState.finish && !this.finishloop ) {
+						this.finishloop = true;
+					} else if ( !this.finishloop ) {
+						this.resume();
+					}
+				} else if ( this.playState == 'init' || this.playState == 'ended' ) {
+					 this.start();
+				}
+			}
+		};
+		
+		/*  V I D E O  */
+		
+		appPage.prototype.start = function() {
+			if ( !this.hasRunned ) setTimeout(function(){
+				navigator.splashscreen.hide();
+			}, 10);
+		  
+		  this.playState = 'start';
+		  //this.timeUpdate();
+		  
+		  if (this.pauseState.time !== 0) {
+			  this.video.currentTime = 0;
+			  this.video.play();
+		  } else {
+			  //this.video.load();
+			  this.pause();
+			  this.loop();
+		  }
+		  
+		  if ( !this.hasRunned && this.sound ) {
+				//this.sound.seekTo(0); //this.sound.currentTime = 0;
+				this.sound.play({ numberOfLoops: 99 });
+		  }
+		  
+		  this.hidePoster(true);
+		  this.hasRunned = true;
+		};
+		
+		appPage.prototype.pause = function() {
+			this.video.pause();
+			this.video.currentTime = this.pauseState.time;
+		  this.playState = 'paused';
+		};
+		
+		appPage.prototype.loop = function() {
+			this.hideLoop(false);
+			this.videoloop.play();
+		};
+		
+		appPage.prototype.resume = function() {
+			this.hideLoop(true);
+			if (this.videoloop) this.videoloop.pause();
+			this.video.play();
+		  this.playState = 'resume';
+		};
+		
+		appPage.prototype.reset = function(index,current) {
+			this.hidePoster(false);
+			this.video.currentTime = 0;
+			this.video.pause();
+			
+			window.speechSynthesis.cancel();
+			
+			if ( this.sound ) this.resetSound();
+		  if ( this.videoloop ) this.resetLoop();
+		  
+		  this.playState = 'init';
+		  this.hasRunned = false;
+			this.isCurrent = false;
+			
+			if ( index == current-1 || index == current+1 ) this.recover();
+			var current_three = (index >= current-1 && index <= current+1);
+			if ( !current_three ) this.destroy();
+		};
+		
+		appPage.prototype.touchplay = function() {
+			this.hideLoop(false);
+			this.videoloop.play();
+		};
+		
+		appPage.prototype.touchpause = function() {
+			this.hideLoop(true);
+			this.videoloop.pause();
+		};
+				
+				appPage.prototype.destroy = function() {
+					this.video.pause();
+					this.video.src = ''; // empty source
+					//this.video.load();
+					
+					if ( this.videoloop ) {
+						this.videoloop.pause();
+						this.videoloop.src = ''; // empty source
+						//this.videoloop.load();
+					}
+					
+					this.elem.classList.add('off-screen');
+				};
+				
+				appPage.prototype.recover = function() {
+					this.video.src = this.videourl;
+					this.video.load();
+					
+					if ( this.videoloop ) {
+						this.videoloop.src = this.loopurl;
+						this.videoloop.load();
+					}
+					
+					this.elem.classList.remove('off-screen');
+				};
+				
+				appPage.prototype.onVideoEnded = function() {
+					this.playState = 'ended';
+				};
+				
+				appPage.prototype.onVideoLoaded = function() { this.duration = this.video.duration; };
+				
+				appPage.prototype.onLoopLoaded = function() { 
+					this.loopduration = this.videoloop.duration;
+					this.loopstart = this.loopduration / 4;
+					this.loopend = this.loopstart * 3;
+				};
+				
+				appPage.prototype.onTimeUpdate = function() {
+					// Kolla om det kan ha med 'this.playState' att göra att den stanna på pause.time ist. startar om
+					if ( this.playState == 'start' && this.video.currentTime >= this.pauseState.time ) {
+						this.pause();
+						if (this.pauseState.loop) this.loop();
+					}
+					if (this.endloop) {
+						if ( this.video.currentTime >= this.duration ) {
+							this.playState = 'start';
+							this.video.currentTime = 0;
+						}
+					}
+				};
+				
+				appPage.prototype.onLoopUpdate = function() {
+					if ( this.videoloop.currentTime >= this.loopend-0.05 ) {
+						this.videoloop.currentTime = this.loopstart;
+						this.onLoopEnded();
+					}
+				};
+				
+				appPage.prototype.hidePoster = function(hide) {
+					hide = typeof hide !== 'undefined' ? hide : true;
+					this.elem.classList[ (hide) ? 'remove' : 'add' ]('poster');
+				};
+				
+				appPage.prototype.hideLoop = function(hide) {
+					hide = typeof hide !== 'undefined' ? hide : true;
+					if ( this.videoloop )	this.videoloop.currentTime = this.loopstart;
+					if ( this.videoloop ) this.videoloop.classList[ (hide) ? 'add' : 'remove' ]('hidden');
+				};
+				
+				appPage.prototype.resetSound = function() {
+					this.sound.stop();
+					this.sound.release();
+				};
+				
+				appPage.prototype.resetLoop = function() {
+					this.hideLoop(true);
+					this.videoloop.pause();
+					this.videoloop.currentTime = this.loopstart;
+				};
+				
+				appPage.prototype.onLoopEnded = function() {
+					//this.videoloop.play();
+					if ( this.pauseState.finish && this.finishloop ) {
+						this.finishloop = false;
+						this.resume();
+						this.videoloop.currentTime = 0;
+						this.playedCount = 0;
+					}
+				};
 
-appPage.prototype.onBlur = function(){
-	this.reset();
-};
-
-appPage.prototype.onFocus = function(){
-	this.start();
-};
-
-appPage.prototype.onTouchStart = function(e){
-	this.click = true;
-	this.touchTime = setTimeout((function(time){
-		this.click = false;
-		clearTimeout(time)
-	}).bind(this), 250);
-};
-
-appPage.prototype.onTouchMove = function(e){
-	this.click = false;
-	clearTimeout(this.touchTime);
-};
-
-appPage.prototype.onTouchEnd = function(e){
-	if ( this.playState == 'paused' ) {
-		if ( this.click ) this.resume();
-	} else if ( this.playState == 'init' || this.playState == 'ended' ) {
-		if ( this.click ) this.start();
-	}
-};
-
-appPage.prototype.onVideoEnded = function() {
-	this.playState = 'ended';
-	if (this.pauseState.loop) this.start();
-};
-
-appPage.prototype.onVideoLoaded = function() {
-	this.isLoaded = true;
-	this.duration = this.video.duration;
-	if ( this.playState == 'loading' ) {
-		this.start();
-	}
-};
-
-appPage.prototype.onTimeUpdate = function() {
-	if ( this.playState == 'start' && this.video.currentTime >= this.pauseState.time ) {
-		this.pause();
-		if (this.pauseState.loop !== null) this.loop();
-	}
-	if ( this.video.currentTime >= this.duration-0.1 ) this.hidePoster(true);
-};
-
-appPage.prototype.hidePoster = function(hide) {
-	hide = typeof hide !== 'undefined' ? hide : true;
-	if ( hide ) {
-		setTimeout( (function(){
-			this.elem.className = 'page';
-		}).bind(this), 250);
-	} else {
-		this.elem.className = 'page poster';
-	}
-};
-
-appPage.prototype.hideLoop = function(hide) {
-	hide = typeof hide !== 'undefined' ? hide : true;
-	if ( hide ) {
-		if (this.videoloop) this.videoloop.className = 'video-loop hidden';
-	} else {
-		setTimeout( (function(){
-			if (this.videoloop) this.videoloop.className = 'video-loop';
-		}).bind(this), 250);
-	}
-};
-
-appPage.prototype.load = function() {
-	this.video.load();
-  if (this.sound) this.sound.load();
-  if (this.videoloop) this.videoloop.load();
-  this.playState = 'loading';
-}
-
-appPage.prototype.start = function() {
-  if ( this.isLoaded ) {
-		if ( !this.hasRunned ) navigator.splashscreen.hide();
-	  this.video.currentTime = 0;
-	  this.video.play();
-	  
-	  if ( !this.hasRunned && this.sound ) {
-			this.sound.currentTime = 0;
-			this.sound.play();
-	  }
-	  
-	  this.hidePoster(true);
-	  this.playState = 'start';
-	  this.hasRunned = true;
-  } else {
-	  this.load();
-  }
-};
-
-appPage.prototype.resume = function() {
-	this.hideLoop(true);
-	if (this.videoloop) this.videoloop.pause();
-	
-  this.video.play();
-  this.playState = 'resume';
-};
-
-appPage.prototype.reset = function() {
-	this.hidePoster(false);
-	this.video.pause();
-	this.video.currentTime = 0;
-	
-	if ( this.sound ) {
-		this.sound.pause();
-		this.sound.currentTime = 0;
-  }
-  
-  if ( this.videoloop ) {
-		this.videoloop.pause();
-		this.videoloop.currentTime = 0;
-		this.hideLoop(true);
-  }
-  
-  this.playState = 'init';
-  this.hasRunned = false;
-	this.isLoaded = false;
-};
-
-appPage.prototype.pause = function() {
-	this.video.pause();
-	this.video.currentTime = this.pauseState.time;
-  this.playState = 'paused';
-};
-
-appPage.prototype.loop = function() {
-	if ( this.videoloop ) this.videoloop.play();
-	setTimeout((function(){
-		if ( this.videoloop ) this.hideLoop(false);
-	}).bind(this), 250);
-};
 
 var app = {
     initialize: function() {
@@ -230,22 +409,28 @@ var app = {
 			_self.scrollCanceled = null;
 			_self.currentPageIndex = 0;
 			_self.pageCount = 0;
+			_self.parallax = 1.3;
+			_self.ww = window.innerWidth;
+			_self.wh = window.innerHeight;
+		  _self.new_width = _self.wh*0.75;
+		  _self.center =  Math.round( -( _self.new_width - _self.ww ) / 2 );
+		  _self.prlx = _self.ww * _self.parallax;
 			_self.options = { 
 				scrollX: true, 
 				scrollY: false, 
 				momentum: false, 
 				mouseWheel: false, 
 				snap: 'li',
+				//deceleration: 0.0006,
 				indicators: [{
 					el: document.getElementById('parallax'),
 					listenX: true,
 					resize: false,
 					ignoreBoundaries: true,
-					speedRatioX: 1.4,
+					speedRatioX: _self.parallax,
 				}],
 			};
 			_self.pages = [];
-			_self.testArr = [];
       _self.bindEvents();
     },
     bindEvents: function() {
@@ -253,8 +438,11 @@ var app = {
     },
     onDeviceReady: function() {
 				document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
-				window.addEventListener('resize', _self.onResize, true);
+				document.addEventListener('pause', _self.onBlur, false);
+				document.addEventListener('resume', _self.onFocus, false);
         _self.isLoaded = true;
+        
+        var frameCSS = '';
 				
 				for (var key in pagesObj) {
 					if (pagesObj.hasOwnProperty(key)) {
@@ -262,61 +450,77 @@ var app = {
 						var video = null,
 								loop = false,
 								sound = false;
+								answer = false;
 
 						var newPage = document.createElement("li");
-								newPage.setAttribute('class', 'page');
-								if (page.poster !== null) newPage.setAttribute('style', 'background-image:url("'+page.poster+'")');
-								newPage.setAttribute('name', key);
+								newPage.setAttribute('id', key);
+						var li_classes = 'poster';
+								li_classes += ( page.pause.type=='touch' ) ? ' touch' : '';
+								newPage.setAttribute('class', li_classes);
+								if (page.poster) newPage.setAttribute('style', 'background-image:url("'+page.poster+'")');
 						
-						if (page.video!=null) {
+						if (page.video) {
 							video = document.createElement("video");
 								video.setAttribute('class', 'video');
+								video.setAttribute('poster', 'poster/transparent.png');
 								video.setAttribute('webkit-playsinline', 'true');
-								video.setAttribute('src', page.video);
+								if ( _self.pageCount < 3 ) video.setAttribute('src', page.video);
 								video.setAttribute('type', 'video/mp4');
+								video.setAttribute('preload','auto');
+								if ( page.endloop ) video.setAttribute('loop','true');
 							newPage.appendChild(video);
 						}
-						if (page.pause.type=='loop' && page.pause.loop!=null) {
+						if (page.pause.type=='loop' || page.pause.type=='touch' && page.pause.loop) {
 							loop = document.createElement("video");
 							loop.setAttribute('class', 'video-loop');
+							video.setAttribute('poster', 'poster/transparent.png');
 							loop.setAttribute('webkit-playsinline','true');
-							loop.setAttribute('loop','true');
+							//loop.setAttribute('loop','loop');
 							loop.setAttribute('src', page.pause.loop);
 							loop.setAttribute('type', 'video/mp4');
+							video.setAttribute('preload','auto');
 							newPage.appendChild(loop);
 						}
-						if (page.sound!=null) {
-							sound = document.createElement("audio");
-								sound.setAttribute('class', 'background-sound');
-								sound.setAttribute('loop','true');
-								sound.setAttribute('src', page.sound);
-								sound.setAttribute('type', 'audio/mpeg');
-								sound.setAttribute('volume', 0.5);
-							newPage.appendChild(sound);
+	
+						if (page.answer) {
+							answer = document.createElement("input");
+								answer.setAttribute('type', 'button');
+								answer.setAttribute('value', '?');
+							newPage.appendChild(answer);
 						}
+						
 						_self.pageContainer.appendChild(newPage);
 						
 
 						var newFrame = document.createElement("div");
 								newFrame.setAttribute('class', 'frame');
-								var frameInner = document.createElement("div");
-										frameInner.setAttribute('class', 'frame-inner');
-										frameInner.setAttribute('style', 'background-image:url('+page.frame+')');
-								newFrame.appendChild(frameInner);
-								newFrame.appendChild(frameInner.cloneNode(false));
+								newFrame.setAttribute('id', 'frame-'+key);
+															
 						_self.parallaxContainer.appendChild(newFrame);
 						
-						_self.pages[_self.pageCount] = new appPage(newPage, video, loop, sound, page.pause.time, page.pause.loop, newFrame, _self.pageCount, key );
+						/* !== false BECAUSE ZERO (0) IS CONSIDERED 'FALSE' + CHECK typeof */
+						var videopausetime = (page.pause.time !== false) ? page.pause.time : 9999999; 
+						
+						_self.pages[_self.pageCount] = new appPage(newPage, video, page.video, loop, page.pause.loop, sound, page.sound, videopausetime, page.pause.loop, newFrame, _self.pageCount, key, page.pause.type, answer, page.endloop, page.pause.finish, page.answer );
 						_self.pages[_self.pageCount].init();
 						
 						_self.pageCount++;
+						
+						frameCSS += '#frame-'+key+':before, #frame-'+key+':after {background-image:url('+page.frame+')} ';
+						if ( _self.pageCount == pageCount ) {
+							var frameStyle = document.createElement("style");
+									frameStyle.type = 'text/css';
+									frameStyle.appendChild( document.createTextNode( frameCSS ) );
+							document.getElementsByTagName('body')[0].appendChild(frameStyle);
+						}
 					}
 				}
 				
 				_self.loadScroll( true );
     },
 		loadScroll: function( first ) {
-			_self.pages.forEach( _self.adjustWidth );
+			if ( first ) _self.pages.forEach( _self.adjustWidth );
+			_self.pages.forEach( _self.adjustFrame );
 			if ( !first ) _self.myScroll.destroy();
 			_self.myScroll = new IScroll('#wrapper', _self.options);
 			_self.myScroll.on('scrollEnd', _self.onScrollEnd);
@@ -324,35 +528,58 @@ var app = {
 			_self.myScroll.goToPage(_self.currentPageIndex, 0, 0);
 			_self.initCurrentPage(_self.currentPageIndex);
 		},
-		adjustWidth: function(el,i,arr){
-			var ww = window.innerWidth;
-			var wh = window.innerHeight;
-			var proportions = ww / wh;
-	    var video_prop = 750 / 1334;
-	    var new_height = ww/video_prop;
-	    var margin_top = -( new_height - wh ) / 2;
+		adjustWidth: function( el, i ){
 			
-			el.elem.style.width = ww+'px';
-			el.elem.style.backgroundPositionY = margin_top+'px';
-			el.video.style.marginTop = margin_top+'px';
-			if ( el.videoloop ) el.videoloop.style.top = margin_top+'px';
-			el.frame.style.width = ww * 1.4 + 'px';
-			var margin = (i===0) ? -( ( ww * 1.4 ) - ww ) / 2 : 0;
-			el.frame.style.marginLeft = margin + 'px';
+			el.elem.style.height = _self.wh+'px';
+			el.elem.style.width = _self.ww+'px';
+			
+			//if (_self.ww/_self.wh != 0.75) {
+		    
+				
+				el.video.style.width = _self.new_width+'px';
+				el.video.style.marginLeft = _self.center+'px';
+				
+				if ( el.videoloop ) {
+					el.videoloop.style.width = _self.new_width+'px';
+					el.videoloop.style.marginLeft = _self.center+'px';
+				}
+				
+				el.elem.style.backgroundPositionX = _self.center+'px';
+			//}
 		},
-		resetSiblings: function(index) {
-			_self.pages.forEach(function(el,i){
-				if (i != index) el.reset();
-				_self.pages[index].isCurrent = false;
+		adjustFrame: function( el, i ){
+			el.frame.style.width = _self.prlx + 'px';
+			el.frame.style.marginLeft = (i===0) ? -( ( _self.prlx ) - _self.ww ) / 2 + 'px' : 0 + 'px';
+		},
+		resetSiblings: function(current,callback) {
+			//index = (typeof current !== null) ? current : 999;
+			_self.pages.forEach(function(item,i){
+				item.reset(i, current);
 			});
+			if (callback && typeof(callback) === "function") callback();
 		},
 		
 		initCurrentPage: function(index) {
-			_self.resetSiblings(index);
-			_self.pages[index].isCurrent = true;
-			_self.pages[index].start();
+			_self.resetSiblings(index, function(){
+				_self.pages[index].isCurrent = true;
+				_self.pages[index].start();
+				_self.timeUpdate();
+			});
 		},
-		
+		timeUpdate: function(timestamp) {
+			var obj = _self.pages[_self.currentPageIndex];
+			if ( obj.isLoopPlaying ) obj.onLoopUpdate();
+	    if ( obj.isPlaying ) obj.onTimeUpdate();
+	    window.requestAnimationFrame( _self.timeUpdate );
+		},
+		onBlur: function(){
+			navigator.splashscreen.show();
+			_self.resetSiblings( _self.currentPageIndex );
+		},
+		onFocus: function(){
+			_self.initCurrentPage( _self.currentPageIndex );
+			navigator.splashscreen.hide();
+		},
 		swapPages: function(first_to_last){
 			var fetch = (first_to_last) ? 'shift' : 'pop';
 			var insert = (first_to_last) ? 'push' : 'unshift';
@@ -367,8 +594,8 @@ var app = {
 			_self.pages[insert](fetched);
 			
 			// Change DOM
-			_self.pageContainer.insertBefore(node, neighbour);
 			_self.parallaxContainer.insertBefore(frame, frameneighbour);
+			_self.pageContainer.insertBefore(node, neighbour);
 			
 			// Reload Scroll
 			_self.currentPageIndex = _self.currentPageIndex+indexchange;
@@ -378,6 +605,7 @@ var app = {
 		},
 		
 		onScrollEnd: function() {
+			//_self.isScrolling = false;
 			var lastPageIndex = _self.currentPageIndex;
 			_self.currentPageIndex = Number(_self.myScroll.currentPage.pageX);
 			
@@ -390,12 +618,6 @@ var app = {
 					_self.initCurrentPage(_self.currentPageIndex);
 				}
 			}
-		},
-		
-		onResize: function(event) {
-		  if ( _self.isLoaded ) {
-			  _self.loadScroll(false);
-		  }
 		},
 };
 
