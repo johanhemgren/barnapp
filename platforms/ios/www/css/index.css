@@ -172,3 +172,25 @@ body {
 #scroller li .video-loop { -webkit-transform: translateZ(10px); }
 
 #scroller li input { -webkit-transform: translateZ(20px); }
+
+.click-indicator { -webkit-transform: translateZ(40px); }
+
+@-webkit-keyframes click_anim {
+    0% { -webkit-transform: scale(0) translateZ(40px); }
+    99% { -webkit-transform: scale(1) translateZ(40px); }
+    100% { -webkit-transform: scale(0) translateZ(40px) ; }
+}
+
+.click-indicator {
+	position: absolute;
+	width: 70px;
+	height: 70px;
+	margin: -35px auto auto -35px;
+	border-radius: 35px;
+	background-color: rgba(255,255,255,0.4);
+	
+	-webkit-animation-name: click_anim;
+    -webkit-animation-duration: 200ms;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-fill-mode: forwards;
+}

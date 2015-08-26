@@ -19,11 +19,11 @@ var pagesObj = {
 */
 	chimpans: {
 		poster: 'poster/chimpans-poster-ny.jpg',
-		video: 'video/SHIMPANS_NY.mp4',
+		video: 'video/schimpans_VIDEO1_2.mp4',
 		pause: {
-			type: 'pause',
-			time: false,
-			loop: false,
+			type: 'loop',
+			time: 0,
+			loop: 'video/SHIMPANS_NY.mp4',
 			finish: false,
 		},
 		endloop: true,
@@ -218,18 +218,30 @@ var appPage = function( page, video, videourl, loop, loopurl, sound, soundurl, p
 		};
 		
 		appPage.prototype.onClickEnd = function(e){
-			/* Check if answer button was clicked */
+			/* Check if answer button was NOT clicked */
 			if ( this.click && e.target.nodeName != 'INPUT') {
 				if ( this.playState == 'paused' ) {
 					if ( this.pauseState.finish && !this.finishloop ) {
 						this.finishloop = true;
 					} else if ( !this.finishloop ) {
 						this.resume();
+						this.onClickIndicate( e.changedTouches['0'].screenX, e.changedTouches['0'].screenY );
 					}
 				} else if ( this.playState == 'init' || this.playState == 'ended' ) {
 					 this.start();
+					 this.onClickIndicate( e.changedTouches['0'].screenX, e.changedTouches['0'].screenY );
 				}
 			}
+		};
+		
+		appPage.prototype.onClickIndicate = function(x,y){
+			var body = document.getElementsByTagName('body')[0];
+			var indicator = document.createElement('div');
+			indicator.className = 'click-indicator';
+			indicator.style.left = x+'px';
+			indicator.style.top = y+'px';
+			indicator.addEventListener('webkitAnimationEnd', function(){ indicator.remove(); }, false);
+			body.appendChild(indicator);
 		};
 		
 		/*  V I D E O  */
@@ -431,6 +443,7 @@ var app = {
 				}],
 			};
 			_self.pages = [];
+			//_self.currentPageObj = null;
       _self.bindEvents();
     },
     bindEvents: function() {
@@ -561,6 +574,7 @@ var app = {
 		
 		initCurrentPage: function(index) {
 			_self.resetSiblings(index, function(){
+				//_self.currentPageObj = _self.pages[index];
 				_self.pages[index].isCurrent = true;
 				_self.pages[index].start();
 				_self.timeUpdate();
@@ -569,8 +583,8 @@ var app = {
 		timeUpdate: function(timestamp) {
 			var obj = _self.pages[_self.currentPageIndex];
 			if ( obj.isLoopPlaying ) obj.onLoopUpdate();
-	    if ( obj.isPlaying ) obj.onTimeUpdate();
-	    window.requestAnimationFrame( _self.timeUpdate );
+			if ( obj.isPlaying ) obj.onTimeUpdate();
+			window.requestAnimationFrame( _self.timeUpdate );
 		},
 		onBlur: function(){
 			navigator.splashscreen.show();
